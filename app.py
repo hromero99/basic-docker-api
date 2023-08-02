@@ -39,3 +39,17 @@ def get_all_containers():
             "status": container_obj.status
         })
     return data
+
+@app.route("/api/v1/containers/restart/<container_id>",methods=["GET"])
+def restart_container(container_id):
+    if not validate_token(request.headers.get('Authorization')):
+        return "Unauthorized"
+    docker_client = docker.from_env()
+    if "sha256" in container_id:
+        container_id = container_id.strip("sha256")
+    try:
+        docker_container = docker_client.containers.get(container_id.strip(" "))
+        docker_container.restart()
+        return container_id
+    except Exception as error:
+        return {"error": f"{error}"}
