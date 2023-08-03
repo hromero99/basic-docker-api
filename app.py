@@ -56,6 +56,8 @@ def restart_container(container_id):
             docker_container.stop()
         elif args["operation"] == "remove":
             docker_container.remove(force=True)
+        elif args["operation"] == "start":
+            docker_container.start()
         return container_id
     except Exception as error:
         return {"error": f"{error}"}
