@@ -40,8 +40,9 @@ def get_all_containers():
         })
     return data
 
-@app.route("/api/v1/containers/restart/<container_id>",methods=["GET"])
+@app.route("/api/v1/containers/<container_id>/execute",methods=["GET"])
 def restart_container(container_id):
+    args = request.args.to_dict()
     if not validate_token(request.headers.get('Authorization')):
         return "Unauthorized"
     docker_client = docker.from_env()
@@ -49,7 +50,12 @@ def restart_container(container_id):
         container_id = container_id.strip("sha256")
     try:
         docker_container = docker_client.containers.get(container_id.strip(" "))
-        docker_container.restart()
+        if args["operation"] == "restart":
+            docker_container.restart()
+        elif args["operation"] == "stop":
+            docker_container.stop()
+        elif args["operation"] == "remove":
+            docker_container.remove(force=True)
         return container_id
     except Exception as error:
         return {"error": f"{error}"}
