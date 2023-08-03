@@ -65,7 +65,7 @@ def restart_container(container_id):
 
 
 @app.route("/api/v1/containers/<container_id>/start", methods=["GET"])
-def restart_container(container_id):
+def start_container(container_id):
     args = request.args.to_dict()
     if not validate_token(request.headers.get("Authorization")):
         return "Unauthorized"
@@ -81,7 +81,7 @@ def restart_container(container_id):
 
 
 @app.route("/api/v1/containers/<container_id>/stop", methods=["GET"])
-def restart_container(container_id):
+def stop_container(container_id):
     args = request.args.to_dict()
     if not validate_token(request.headers.get("Authorization")):
         return "Unauthorized"
@@ -97,7 +97,7 @@ def restart_container(container_id):
 
 
 @app.route("/api/v1/containers/<container_id>/remove", methods=["GET"])
-def restart_container(container_id):
+def remove_container(container_id):
     args = request.args.to_dict()
     if not validate_token(request.headers.get("Authorization")):
         return "Unauthorized"
