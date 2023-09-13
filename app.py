@@ -133,15 +133,16 @@ def get_cpu_usage():
     return data
 
 @app.route("/api/v1/node/ram",methods=["GET"])
-def get_cpu_usage():
+def get_ram_usage():
     if not validate_token(request.headers.get("Authorization")):
         return "Unauthorized"
-    usage_percenteje_per_cpu = psutil.cpu_percent(interval=1, percpu=True)
-    data = {}
-    index = 0
-    for cpu in usage_percenteje_per_cpu:
-        data[index] = cpu
-        index = index + 1
+    usage_ram = psutil.virtual_memory(interval=1, percpu=True)
+    data = {
+        "used": usage_ram.used,
+        "free": usage_ram.free,
+        "total": usage_ram.total,
+        "percent": (usage_ram.free/usage_ram.total )*100
+    }
     return data
 
 @app.route("/api/v1/node/disk",methods=["GET"])
