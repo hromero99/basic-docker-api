@@ -136,7 +136,7 @@ def get_cpu_usage():
 def get_ram_usage():
     if not validate_token(request.headers.get("Authorization")):
         return "Unauthorized"
-    usage_ram = psutil.virtual_memory(interval=1, percpu=True)
+    usage_ram = psutil.virtual_memory()
     data = {
         "used": usage_ram.used,
         "free": usage_ram.free,
