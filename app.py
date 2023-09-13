@@ -1,6 +1,7 @@
 from flask import Flask, request
 import docker
 import json
+import psutil
 
 app = Flask(__name__)
 
@@ -50,6 +51,8 @@ def get_all_containers():
 
 @app.route("/api/v1/containers/<container_id>/restart", methods=["GET"])
 def restart_container(container_id):
+    if not validate_token(request.headers.get("Authorization")):
+        return "Unauthorized"
     args = request.args.to_dict()
     if not validate_token(request.headers.get("Authorization")):
         return "Unauthorized"
@@ -66,6 +69,8 @@ def restart_container(container_id):
 
 @app.route("/api/v1/containers/<container_id>/start", methods=["GET"])
 def start_container(container_id):
+    if not validate_token(request.headers.get("Authorization")):
+        return "Unauthorized"
     args = request.args.to_dict()
     if not validate_token(request.headers.get("Authorization")):
         return "Unauthorized"
@@ -82,6 +87,8 @@ def start_container(container_id):
 
 @app.route("/api/v1/containers/<container_id>/stop", methods=["GET"])
 def stop_container(container_id):
+    if not validate_token(request.headers.get("Authorization")):
+        return "Unauthorized"
     args = request.args.to_dict()
     if not validate_token(request.headers.get("Authorization")):
         return "Unauthorized"
@@ -98,6 +105,8 @@ def stop_container(container_id):
 
 @app.route("/api/v1/containers/<container_id>/remove", methods=["GET"])
 def remove_container(container_id):
+    if not validate_token(request.headers.get("Authorization")):
+        return "Unauthorized"
     args = request.args.to_dict()
     if not validate_token(request.headers.get("Authorization")):
         return "Unauthorized"
@@ -110,3 +119,41 @@ def remove_container(container_id):
         return container_id
     except Exception as error:
         return {"error": f"{error}"}
+
+@app.route("/api/v1/node/cpu",methods=["GET"])
+def get_cpu_usage():
+    if not validate_token(request.headers.get("Authorization")):
+        return "Unauthorized"
+    usage_percenteje_per_cpu = psutil.cpu_percent(interval=1, percpu=True)
+    data = {}
+    index = 0
+    for cpu in usage_percenteje_per_cpu:
+        data[index] = cpu
+        index = index + 1
+    return data
+
+@app.route("/api/v1/node/ram",methods=["GET"])
+def get_cpu_usage():
+    if not validate_token(request.headers.get("Authorization")):
+        return "Unauthorized"
+    usage_percenteje_per_cpu = psutil.cpu_percent(interval=1, percpu=True)
+    data = {}
+    index = 0
+    for cpu in usage_percenteje_per_cpu:
+        data[index] = cpu
+        index = index + 1
+    return data
+
+@app.route("/api/v1/node/disk",methods=["GET"])
+def get_disk_usage():
+    if not validate_token(request.headers.get("Authorization")):
+        return "Unauthorized"
+    usage_principal_disk = psutil.disk_usage('/')
+    data = {
+        "total": usage_principal_disk.total/10**9,
+        "used": usage_principal_disk.used/10**9,
+        "free": usage_principal_disk.free/10**9,
+        "percent": usage_principal_disk.percent
+    }
+    return data
+    
